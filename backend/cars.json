@@ -1,0 +1,32 @@
+[
+	{
+		"id": 1,
+		"make": "Mercedes-Benz",
+		"model": "A-class",
+		"seats": 5
+	},
+	{
+		"id": 5,
+		"make": "coolcar2",
+		"model": "premium",
+		"seats": 6
+	},
+	{
+		"id": 2,
+		"make": "coolcar",
+		"model": "newtestpremium",
+		"seats": 3
+	},
+	{
+		"id": 7,
+		"make": "coolcar",
+		"model": "premium",
+		"seats": 5
+	},
+	{
+		"id": 4,
+		"make": "coolcar",
+		"model": "premium",
+		"seats": 5
+	}
+]
