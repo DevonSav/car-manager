@@ -14,12 +14,16 @@ Valid data examples:
 ```
 
 ### Removing a car
-Execute a **DELETE** at: http://localhost:8080/api/[CAR ID]\
-Where '[CAR ID]' is an existing integer ID number.\
-No post body should be included.
+Execute a **DELETE** at: http://localhost:8080/api  
+The post body should contain car data in JSON format (only an ID is actually required).\
+Valid data examples:
+```yaml
+// Minimal requirement where 'id' is an existing integer ID number.
+{"id": 3}
+```
 
 ### Updating a car
-Execute a **PUT** at: http://localhost:8080/api\
+Execute a **PUT** at: http://localhost:8080/api  
 The post body should contain car data in JSON format.\
 Data must have a target ID and either a new model, new seat number, or both.\
 Valid data examples:
