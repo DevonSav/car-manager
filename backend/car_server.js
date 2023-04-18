@@ -116,7 +116,6 @@ app.post('/api', (request, response) => {
 });
 
 
-
 /**
  * Removes the car with matching ID from the file.
  * Returns true if sucessful, otherwise returns false.

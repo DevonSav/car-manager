@@ -2,13 +2,8 @@
 	text-align: center;
 }
 
-
-
 .App-header {
 	background-color: #282c34;
-	/*background-color: rgb(34, 36, 41);*/
-	/*background-color: #191a1b;*/
-
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -25,13 +20,11 @@
 
 .carDataInput {
 	padding: 8px 4px;
-	/*background-color: #3B3B3B;*/
 }
-
 
 .action-btn {
 	padding: 15px 32px;
-	margin: 4px 2px;
+	margin: 4px 50px;
 	color: rgb(240, 235, 226);
 	background-color: rgb(31, 33, 33);
 	border-color: #585d5d;
@@ -41,11 +34,33 @@
 	font-size: calc(1px + 1.8vmin);
 	font-weight: bold;
 	cursor: pointer;
-	-webkit-user-select: none; /* Safari */
-	-ms-user-select: none; /* IE 10 and IE 11 */
-	user-select: none; /* Standard syntax */
+	-webkit-user-select: none;	/* Safari */
+	-ms-user-select: none;	/* IE 10 and IE 11 */
+	user-select: none;	/* Standard syntax */
+	border-radius: 5px;
 }
 
+#add-car-btn {
+	background-color: rgb(81, 181, 45);
+	border-color: rgb(167, 255, 152);
+}
+
+#update-car-btn {
+	background-color: rgb(72, 159, 139);
+	border-color: rgb(101, 243, 226);
+	padding: 15px 20px;
+}
+
+#delete-car-btn {
+	background-color: rgb(159, 72, 72);
+	border-color: rgb(255, 121, 121);
+	padding: 15px 15px;
+}
+
+#refresh-btn {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
 
 .carTableData {
 	text-align: left;

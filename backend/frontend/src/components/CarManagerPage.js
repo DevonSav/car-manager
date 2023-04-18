@@ -5,14 +5,13 @@ import React from 'react';
  * @param {*} url Target page.
  * @param {*} data The JSON data.
  */
-function dataPost(url = ``, data = {make: "ERROR"}) {	// FIXME:
-	// Default options are marked with *
+function dataPost(url = ``, data = {make: "ERROR"}) {
 	return fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(data), // body data type must match "Content-Type" header
+		body: JSON.stringify(data) // body data type must match "Content-Type" header
 	})
 	.then(response => response.json()); // parses response to JSON
 }
@@ -22,14 +21,13 @@ function dataPost(url = ``, data = {make: "ERROR"}) {	// FIXME:
  * @param {*} url Target page.
  * @param {*} data The JSON data.
  */
-function dataPut(url = ``, data = {make: "ERROR"}) {	// FIXME:
-	// Default options are marked with *
+function dataPut(url = ``, data = {make: "ERROR"}) {
 	return fetch(url, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(data), // body data type must match "Content-Type" header
+		body: JSON.stringify(data)
 	})
 	.then(response => response.json()); // parses response to JSON
 }
@@ -39,18 +37,21 @@ function dataPut(url = ``, data = {make: "ERROR"}) {	// FIXME:
  * @param {*} url Target page.
  * @param {*} data The JSON data.
  */
-function dataDelete(url = ``, data = {make: "ERROR"}) {	// FIXME:
-	// Default options are marked with *
+function dataDelete(url = ``, data = {make: "ERROR"}) {
 	return fetch(url, {
 		method: "DELETE",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(data), // body data type must match "Content-Type" header
+		body: JSON.stringify(data)
 	})
 	.then(response => response.json()); // parses response to JSON
 }
 
+/**
+ * Displays input fields for adding, updating and deleting cars.
+ * Also displays a list of all current cars.
+ */
 export default class CarManagerPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -58,7 +59,6 @@ export default class CarManagerPage extends React.Component {
 			error: null,
 			isLoaded: false,
 			carList: [],
-			wasInputError: false,
 			idInput: "error",
 			makeInput: "error",
 			modelInput: "error",
@@ -71,27 +71,8 @@ export default class CarManagerPage extends React.Component {
 		this.refreshCarList = this.refreshCarList.bind(this);
 	}
 
-	componentDidMount() {
-		// Fetches the car data using the api and updates the state variable accordingly.
-		fetch("/api")
-			.then(res => res.json())
-			.then((result) => {
-					this.setState({
-						isLoaded: true,
-						carList: result.sort((a, b) => a.id - b.id)	// Sort the list by ID
-					});
-				},
-				(error) => {
-					this.setState({
-						isLoaded: true,
-						error
-					});
-				}
-			)
-	}
-
 	/**
-	 * Fetches the car data using the api and updates the state variable accordingly.
+	 * Fetches the car data using the api and updates the state variables accordingly.
 	 */
 	refreshCarList() {
 		fetch("/api")
@@ -109,6 +90,13 @@ export default class CarManagerPage extends React.Component {
 					});
 				}
 			)
+	}
+
+	/**
+	 * Runs automatically.
+	 */
+	componentDidMount() {
+		this.refreshCarList();
 	}
 
 	/**
@@ -147,9 +135,12 @@ export default class CarManagerPage extends React.Component {
 			"seats": seats
 		}
 
-		dataPost(`/api`, newCarData)	// FIXME:
+		dataPost(`/api`, newCarData)
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
+
+		// Update the displayed list
+		this.refreshCarList();
 	}
 
 	/**
@@ -177,9 +168,12 @@ export default class CarManagerPage extends React.Component {
 			"seats": seats
 		}
 
-		dataPut(`/api`, newCarData)	// FIXME:
+		dataPut(`/api`, newCarData)
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
+
+		// Update the displayed list
+		this.refreshCarList();
 	}
 
 	/**
@@ -201,13 +195,15 @@ export default class CarManagerPage extends React.Component {
 			"id": id
 		}
 
-		dataDelete(`/api`, carData)	// FIXME:
+		dataDelete(`/api`, carData)
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
+
+		// Update the displayed list
+		this.refreshCarList();
 	}
 
 	render() {
-
 		let carDataList = <h3>ERROR, Something went wrong.</h3>;
 		const { error, isLoaded, carList} = this.state;
 
@@ -235,7 +231,7 @@ export default class CarManagerPage extends React.Component {
 		return (
 			<div className="car-manager">
 				<h2 id="main-heading">Car Manager</h2>
-				<form>	{/*onSubmit={this.updateStoredFormInput}		onSubmit={}*/}
+				<form>
 					<table className='inputTable'>
 						<thead>
 							<tr>
@@ -255,15 +251,13 @@ export default class CarManagerPage extends React.Component {
 						</tbody>
 					</table>
 
-					{/*<input type='submit' value="Post" className='action-btn' onClick={this.handlePosting}/>*/}
-					{/*<input type='submit' value="Confirm" className='action-btn'/>*/}
-					<button className='action-btn' onClick={this.addCar}>Add Car</button>
-					<button className='action-btn' onClick={this.updateCar}>Update Car</button>
-					<button className='action-btn' onClick={this.deleteCar}>Delete Car</button>
+					<button id='add-car-btn' className='action-btn' onClick={this.addCar}>Add Car</button>
+					<button id='update-car-btn' className='action-btn' onClick={this.updateCar}>Update Car</button>
+					<button id='delete-car-btn' className='action-btn' onClick={this.deleteCar} title='WARNING: No confirmation, activates instantly!'>Delete Car</button>
 				</form>
 
 				<br></br>
-				<button className='action-btn' onClick={this.refreshCarList}>Refresh List</button>
+				<button id='refresh-btn' className='action-btn' onClick={this.refreshCarList}>Refresh List</button>
 				<table>
 					<thead>
 						<tr>

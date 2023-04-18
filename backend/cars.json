@@ -30,12 +30,6 @@
 		"seats": 5
 	},
 	{
-		"id": 12,
-		"make": "post test",
-		"model": "newmodel",
-		"seats": 6
-	},
-	{
 		"id": 6,
 		"make": "huh",
 		"model": "hmm3",
@@ -45,6 +39,24 @@
 		"id": 19,
 		"make": "blah",
 		"model": "hmm",
+		"seats": 3
+	},
+	{
+		"id": 8,
+		"make": "blah",
+		"model": "test",
+		"seats": 3
+	},
+	{
+		"id": 9,
+		"make": "blah2",
+		"model": "test",
+		"seats": 3
+	},
+	{
+		"id": 10,
+		"make": "blah2",
+		"model": "test",
 		"seats": 3
 	}
 ]
