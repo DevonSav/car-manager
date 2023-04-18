@@ -146,14 +146,13 @@ function deleteCar(carID) {
 
 /**
  * Deletes a car matching the provided ID.
- * Use DELETE at: api/[CAR ID HERE]
- * No body should be provided.
+ * Takes json data that has an ID.
  */
-app.delete('/api/:carID', (request, response) => {
-	console.log('Delete param: ' + request.params.carID);	// FIXME:
+app.delete('/api', (request, response) => {
+	console.log('Delete param: ' + request.params.carID);
 
 	const cars = getCars();
-	const targetID = parseInt(request.params.carID);
+	const targetID = parseInt(request.body.id);
 
 	// Missing ID
 	if (!hasCarID(cars, targetID)) {

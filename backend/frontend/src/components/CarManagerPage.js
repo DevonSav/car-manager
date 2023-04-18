@@ -1,7 +1,11 @@
 import React from 'react';
 
-
-function postData(url = ``, data = {make: "ERROR"}) {	// FIXME:
+/**
+ * Send a POST at the provided url using the json data as the body.
+ * @param {*} url Target page.
+ * @param {*} data The JSON data.
+ */
+function dataPost(url = ``, data = {make: "ERROR"}) {	// FIXME:
 	// Default options are marked with *
 	return fetch(url, {
 		method: "POST",
@@ -13,10 +17,32 @@ function postData(url = ``, data = {make: "ERROR"}) {	// FIXME:
 	.then(response => response.json()); // parses response to JSON
 }
 
-function putData(url = ``, data = {make: "ERROR"}) {	// FIXME:
+/**
+ * Send a PUT at the provided url using the json data as the body.
+ * @param {*} url Target page.
+ * @param {*} data The JSON data.
+ */
+function dataPut(url = ``, data = {make: "ERROR"}) {	// FIXME:
 	// Default options are marked with *
 	return fetch(url, {
 		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(data), // body data type must match "Content-Type" header
+	})
+	.then(response => response.json()); // parses response to JSON
+}
+
+/**
+ * Send a DELETE at the provided url using the json data as the body.
+ * @param {*} url Target page.
+ * @param {*} data The JSON data.
+ */
+function dataDelete(url = ``, data = {make: "ERROR"}) {	// FIXME:
+	// Default options are marked with *
+	return fetch(url, {
+		method: "DELETE",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -41,16 +67,18 @@ export default class CarManagerPage extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.addCar = this.addCar.bind(this);
 		this.updateCar = this.updateCar.bind(this);
+		this.deleteCar = this.deleteCar.bind(this);
 		this.refreshCarList = this.refreshCarList.bind(this);
 	}
 
 	componentDidMount() {
+		// Fetches the car data using the api and updates the state variable accordingly.
 		fetch("/api")
 			.then(res => res.json())
 			.then((result) => {
 					this.setState({
 						isLoaded: true,
-						carList: result
+						carList: result.sort((a, b) => a.id - b.id)	// Sort the list by ID
 					});
 				},
 				(error) => {
@@ -62,13 +90,16 @@ export default class CarManagerPage extends React.Component {
 			)
 	}
 
+	/**
+	 * Fetches the car data using the api and updates the state variable accordingly.
+	 */
 	refreshCarList() {
 		fetch("/api")
 			.then(res => res.json())
 			.then((result) => {
 					this.setState({
 						isLoaded: true,
-						carList: result
+						carList: result.sort((a, b) => a.id - b.id)
 					});
 				},
 				(error) => {
@@ -92,7 +123,7 @@ export default class CarManagerPage extends React.Component {
 	}
 
 	/**
-	 * Attempts to add a car by posting to the api.
+	 * Attempts to add a car by sending a POST command.
 	 * @returns If an error occurs returns 'false'.
 	 */
 	addCar(event) {
@@ -116,13 +147,13 @@ export default class CarManagerPage extends React.Component {
 			"seats": seats
 		}
 
-		postData(`/api`, newCarData)	// FIXME:
+		dataPost(`/api`, newCarData)	// FIXME:
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
 	}
 
 	/**
-	 * Attempts to update a car by running a put command on the api.
+	 * Attempts to update a car by sending a PUT command.
 	 * @returns If an error occurs returns 'false'.
 	 */
 	updateCar(event) {
@@ -146,7 +177,31 @@ export default class CarManagerPage extends React.Component {
 			"seats": seats
 		}
 
-		putData(`/api`, newCarData)	// FIXME:
+		dataPut(`/api`, newCarData)	// FIXME:
+			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
+			.catch(error => console.error(error))
+	}
+
+	/**
+	 * Attempts to delete a car by sending a DELETE command.
+	 * @returns If an error occurs returns 'false'.
+	 */
+	deleteCar(event) {
+		event.preventDefault(); // prevent page refresh
+
+		const id = this.state.idInput;
+
+		if (id == "error") {
+			console.log("Failed to add car. Invalid ID input!");
+			alert("Failed to delete car. Invalid ID input!")
+			return false;
+		}
+
+		const carData = {
+			"id": id
+		}
+
+		dataDelete(`/api`, carData)	// FIXME:
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
 	}
@@ -204,6 +259,7 @@ export default class CarManagerPage extends React.Component {
 					{/*<input type='submit' value="Confirm" className='action-btn'/>*/}
 					<button className='action-btn' onClick={this.addCar}>Add Car</button>
 					<button className='action-btn' onClick={this.updateCar}>Update Car</button>
+					<button className='action-btn' onClick={this.deleteCar}>Delete Car</button>
 				</form>
 
 				<br></br>
@@ -225,3 +281,7 @@ export default class CarManagerPage extends React.Component {
 		);
 	}
 }
+
+/** REFERENCES
+ * Comment from gaiazov: https://stackoverflow.com/questions/48492577/how-to-sort-json-data-in-reactjs
+ */
