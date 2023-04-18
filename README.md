@@ -1,7 +1,7 @@
 # car-manager
 
 ### Adding a car
-Execute a **POST** at: http://localhost:8080/api\
+Execute a **POST** at: http://localhost:8080/api  
 The post body should contain car data in JSON format.\
 The car ID can be set to -1 to generate the next available ID.\
 Valid data examples:
@@ -14,7 +14,7 @@ Valid data examples:
 ```
 
 ### Removing a car
-Execute a **DELETE** at: http://localhost:8080/api/**_[CAR ID]_**\
+Execute a **DELETE** at: http://localhost:8080/api/[CAR ID]\
 Where '[CAR ID]' is an existing integer ID number.\
 No post body should be included.
 

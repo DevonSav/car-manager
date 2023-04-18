@@ -1,5 +1,19 @@
 import React from 'react';
 
+
+
+function postData(url = ``, data = {name: "Sue"}) {	// FIXME:
+	// Default options are marked with *
+	return fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(data), // body data type must match "Content-Type" header
+	})
+	.then(response => response.json()); // parses response to JSON
+}
+
 export default class CarManagerPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -8,6 +22,7 @@ export default class CarManagerPage extends React.Component {
 			isLoaded: false,
 			carList: []
 		};
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 	componentDidMount() {
 		fetch("/api")
@@ -26,6 +41,20 @@ export default class CarManagerPage extends React.Component {
 				}
 			)
 	}
+
+	handleSubmit(event) {
+		console.log("Submitted word: " + this.state.word)
+
+	}
+
+	doSomething() {
+		postData(`/api`, {answer: 42})	// FIXME:
+			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
+			.catch(error => console.error(error))
+	}
+
+
+
 
 	render() {
 
@@ -47,14 +76,17 @@ export default class CarManagerPage extends React.Component {
 		} else {
 			carDataList = (
 				//<WordDetails definition={definition} usage={examples.toString()}/>
-				<ul>
+				<>
 					{carList.map(car => (
-							<li key={car.id}>
-								{car.make} {car.model} {car.seats}
-							</li>
+						<tr className='carDataRow'>
+							<td className='carTableData'>{car.id}</td>
+							<td className='carTableData'>{car.make}</td>
+							<td className='carTableData'>{car.model}</td>
+							<td className='carTableData'>{car.seats}</td>
+						</tr>
 						))
 					}
-				</ul>
+				</>
 			);
 		}
 
@@ -62,7 +94,7 @@ export default class CarManagerPage extends React.Component {
 			<div className="car-manager">
 				<h2 id="main-heading">Car Manager</h2>
 				<form>
-					<table>
+					<table className='inputTable'>
 						<tr>
 							<th>ID</th>
 							<th>Make</th>
@@ -70,17 +102,25 @@ export default class CarManagerPage extends React.Component {
 							<th>Seats</th>
 						</tr>
 						<tr>
-							<td><input id='idInput' type="text" placeholder='ID'/></td>
-							<td><input id='makeInput' type="text" placeholder='Make'/></td>
-							<td><input id='modelInput' type="text" placeholder='Model'/></td>
-							<td><input id='seatsInput' type="text" placeholder='Seats'/></td>
+							<td><input className='carDataInput' id='idInput' type="text" placeholder='ID'/></td>
+							<td><input className='carDataInput' id='makeInput' type="text" placeholder='Make'/></td>
+							<td><input className='carDataInput' id='modelInput' type="text" placeholder='Model'/></td>
+							<td><input className='carDataInput' id='seatsInput' type="text" placeholder='Seats'/></td>
 						</tr>
 					</table>
 
-					<input type="submit" value="Submit" className='submit-btn'/>
+					<input className='action-btn' onClick={this.handleSubmit}/>
 				</form>
 				<br></br>
-				{carDataList}
+				<table>
+					<tr>
+						<th className='tableHeader'>ID</th>
+						<th className='tableHeader'>Make</th>
+						<th className='tableHeader'>Model</th>
+						<th className='tableHeader'>Seats</th>
+					</tr>
+					{carDataList}
+				</table>
 			</div>
 		);
 	}

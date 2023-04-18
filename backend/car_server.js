@@ -3,16 +3,6 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3001;
 
-/*
-if (process.env.NODE_ENV === 'production'){
-	app.use(express.static(path.join(__dirname, 'frontend/build')));	// FIXME: What should this be set to without using heroku
-
-	app.get('*', (req, resp)=> {
-		resp.sendFile(path.resolve(__dirname,'frontend', 'build','index.html'));
-	});
-}
-*/
-
 app.use(express.json());
 
 /**
