@@ -86,7 +86,8 @@ app.post('/api', (request, response) => {
 	// ID conflict
 	if (hasCarID(cars, postedJSON.id)) {
 		// Early return
-		response.send(`Error! Car already exists with ID ${postedJSON.id}.`);
+		const errMsg = `Error! Car already exists with ID ${postedJSON.id}.`;
+		response.send({errMsg});
 		return;
 	}
 
@@ -100,7 +101,8 @@ app.post('/api', (request, response) => {
 				newID += 1;
 			} else {
 				addCar(newID, postedJSON.make, postedJSON.model, postedJSON.seats);
-				response.send(`Success. Added car with auto ID ${newID}.`);
+				const msg = `Success. Added car with auto ID ${newID}.`;
+				response.send({msg});
 				validID = true;
 				return;
 			}
@@ -109,7 +111,8 @@ app.post('/api', (request, response) => {
 
 	// ID was valid
 	addCarDirect(postedJSON);
-	response.send(`Success. Added car with ID ${postedJSON.id}.`);
+	const msg = `Success. Added car with ID ${postedJSON.id}.`;
+	response.send({msg});
 });
 
 
@@ -154,13 +157,15 @@ app.delete('/api/:carID', (request, response) => {
 
 	// Missing ID
 	if (!hasCarID(cars, targetID)) {
-		response.send(`Error! No car exists with ID ${targetID}.`);
+		const errMsg = `Error! No car exists with ID ${targetID}.`;
+		response.send({errMsg});
 		return;
 	}
 
 	// ID was valid, remove car from file
 	deleteCar(targetID);
-	response.send(`Success. Removed car with ID ${targetID}.`);
+	const msg = `Success. Removed car with ID ${targetID}.`;
+	response.send({msg});
 });
 
 /**
@@ -212,7 +217,9 @@ app.put('/api', (request, response) => {
 
 	// Missing ID
 	if (!hasCarID(cars, targetID)) {
-		response.send(`Error! No car exists with ID ${targetID}.`);
+		const errMsg = `Error! No car exists with ID ${targetID}.`;
+		response.send({errMsg});
+
 		return;
 	}
 
@@ -221,13 +228,16 @@ app.put('/api', (request, response) => {
 
 	// Check that any data was actually provided
 	if (newModel == undefined && newSeats == undefined) {
-		response.send(`Error! No updates specified.`);
+		const errMsg = `Error missing data! No updates specified.`;
+		response.send({errMsg});
+
 		return;
 	}
 
 	// ID was valid and at least one value was defined
 	updateCar(targetID, newModel, newSeats);
-	response.send(`Success. Updated car with ID ${targetID}.`);
+	const msg = `Success. Updated car with ID ${targetID}.`;
+	response.send({msg});
 });
 
 

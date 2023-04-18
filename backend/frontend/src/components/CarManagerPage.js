@@ -41,7 +41,9 @@ export default class CarManagerPage extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.addCar = this.addCar.bind(this);
 		this.updateCar = this.updateCar.bind(this);
+		this.refreshCarList = this.refreshCarList.bind(this);
 	}
+
 	componentDidMount() {
 		fetch("/api")
 			.then(res => res.json())
@@ -60,17 +62,39 @@ export default class CarManagerPage extends React.Component {
 			)
 	}
 
+	refreshCarList() {
+		fetch("/api")
+			.then(res => res.json())
+			.then((result) => {
+					this.setState({
+						isLoaded: true,
+						carList: result
+					});
+				},
+				(error) => {
+					this.setState({
+						isLoaded: true,
+						error
+					});
+				}
+			)
+	}
+
+	/**
+	 * Gets the input value and sets the corresponding state variable.
+	 */
 	handleChange(event) {
 		const value = event.target.value;
 		const inputElementId = event.target.id;
 		this.setState({
 			[inputElementId]: value
 		});
-
-		console.log("set state: " + inputElementId + " to " + value);
-		//console.log(this.state.makeInput);
 	}
 
+	/**
+	 * Attempts to add a car by posting to the api.
+	 * @returns If an error occurs returns 'false'.
+	 */
 	addCar(event) {
 		event.preventDefault(); // prevent page refresh
 
@@ -82,7 +106,7 @@ export default class CarManagerPage extends React.Component {
 		if (id == "error" || make == "error" || model == "error" || seats == "error") {
 			console.log("Failed to add car. At least one invalid input!");
 			alert("Failed to add car. At least one invalid input!")
-			return;
+			return false;
 		}
 
 		const newCarData = {
@@ -97,6 +121,10 @@ export default class CarManagerPage extends React.Component {
 			.catch(error => console.error(error))
 	}
 
+	/**
+	 * Attempts to update a car by running a put command on the api.
+	 * @returns If an error occurs returns 'false'.
+	 */
 	updateCar(event) {
 		event.preventDefault(); // prevent page refresh
 
@@ -108,7 +136,7 @@ export default class CarManagerPage extends React.Component {
 		if (id == "error" || make == "error" || model == "error" || seats == "error") {
 			console.log("Failed to update car. At least one invalid input!");
 			alert("Failed to update car. At least one invalid input!");
-			return;
+			return false;
 		}
 
 		const newCarData = {
@@ -122,51 +150,6 @@ export default class CarManagerPage extends React.Component {
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
 	}
-
-
-	/*updateStoredFormInput(event) {
-		event.preventDefault(); // prevent page refresh
-
-		const id = event.target.idInput.value;
-		const make = event.target.makeInput.value;
-		const model = event.target.modelInput.value;
-		const seats = event.target.seatsInput.value;
-
-		this.setState({
-			idInput: id,
-			makeInput: make,
-			modelInput: model,
-			seatsInput: seats
-		});
-
-		console.log("updated stored form data: ")
-		console.log({id, make, model, seats})
-	}
-	*/
-
-
-	/*handlePosting(event) {
-		event.preventDefault(); // prevent page refresh
-
-		console.log("handlePosting")
-		console.log(event.target.idInput.value)
-		console.log(event.target.makeInput.value)
-		console.log(event.target.modelInput.value)
-		console.log(event.target.seatsInput.value)
-
-		const postingData = {
-			"id": event.target.idInput.value,
-			"make": event.target.makeInput.value,
-			"model": event.target.modelInput.value,
-			"seats": event.target.seatsInput.value
-		}
-
-		postData(`/api`, postingData)	// FIXME:
-			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
-			.catch(error => console.error(error))
-	}
-	*/
-
 
 	render() {
 
@@ -224,6 +207,7 @@ export default class CarManagerPage extends React.Component {
 				</form>
 
 				<br></br>
+				<button className='action-btn' onClick={this.refreshCarList}>Refresh List</button>
 				<table>
 					<thead>
 						<tr>
