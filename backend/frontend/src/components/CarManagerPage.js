@@ -2,7 +2,7 @@ import React from 'react';
 
 
 
-function postData(url = ``, data = {name: "Sue"}) {	// FIXME:
+function postData(url = ``, data = {id: -1, make: "ERROR DEFAULT", model: "DEFAULT", seats: 0}) {	// FIXME:
 	// Default options are marked with *
 	return fetch(url, {
 		method: "POST",
@@ -20,9 +20,16 @@ export default class CarManagerPage extends React.Component {
 		this.state = {
 			error: null,
 			isLoaded: false,
-			carList: []
+			carList: [],
+			idInput: "error",
+			makeInput: "error",
+			modelInput: "error",
+			seatsInput: "error"
 		};
-		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+		this.updateCar = this.updateCar.bind(this);
+		this.handlePosting = this.handlePosting.bind(this);
+		this.updateStoredFormInput = this.updateStoredFormInput.bind(this);
 	}
 	componentDidMount() {
 		fetch("/api")
@@ -42,18 +49,74 @@ export default class CarManagerPage extends React.Component {
 			)
 	}
 
-	handleSubmit(event) {
-		console.log("Submitted word: " + this.state.word)
+	handleChange(event) {
+		const value = event.target.value;
+		const inputElementId = event.target.id;
+		this.setState({
+			[inputElementId]: value
+		});
 
+		console.log("set state: " + inputElementId + " to " + value);
+		//console.log(this.state.makeInput);
 	}
 
-	doSomething() {
-		postData(`/api`, {answer: 42})	// FIXME:
+	updateCar(event) {
+		event.preventDefault(); // prevent page refresh
+
+		//const id = event.target.idInput.value;
+		//const make = event.target.makeInput.value;
+		//const model = event.target.modelInput.value;
+		//const seats = event.target.seatsInput.value;
+
+		const id = this.state.idInput;
+		const make = this.state.makeInput;
+		const model = this.state.modelInput;
+		const seats = this.state.seatsInput;
+
+		console.log("State form data: ");
+		console.log({id, make, model, seats});
+	}
+
+	updateStoredFormInput(event) {
+		event.preventDefault(); // prevent page refresh
+
+		const id = event.target.idInput.value;
+		const make = event.target.makeInput.value;
+		const model = event.target.modelInput.value;
+		const seats = event.target.seatsInput.value;
+
+		this.setState({
+			idInput: id,
+			makeInput: make,
+			modelInput: model,
+			seatsInput: seats
+		});
+
+		console.log("updated stored form data: ")
+		console.log({id, make, model, seats})
+	}
+
+
+	handlePosting(event) {
+		event.preventDefault(); // prevent page refresh
+
+		console.log("handlePosting")
+		console.log(event.target.idInput.value)
+		console.log(event.target.makeInput.value)
+		console.log(event.target.modelInput.value)
+		console.log(event.target.seatsInput.value)
+
+		const postingData = {
+			"id": event.target.idInput.value,
+			"make": event.target.makeInput.value,
+			"model": event.target.modelInput.value,
+			"seats": event.target.seatsInput.value
+		}
+
+		postData(`/api`, postingData)	// FIXME:
 			.then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
 			.catch(error => console.error(error))
 	}
-
-
 
 
 	render() {
@@ -62,23 +125,15 @@ export default class CarManagerPage extends React.Component {
 		const { error, isLoaded, carList} = this.state;
 
 		if (error) {
-			carDataList = (
-				<div>
-					Error: {error.message}
-				</div>
-			);
+			carDataList = (<tr><td>Error: {error.message}</td></tr>);
 		} else if (!isLoaded) {
-			carDataList = (
-				<div>
-					Loading...
-				</div>
-			);
+			carDataList = (<tr><td>Loading...</td></tr>);
 		} else {
 			carDataList = (
 				//<WordDetails definition={definition} usage={examples.toString()}/>
 				<>
 					{carList.map(car => (
-						<tr className='carDataRow'>
+						<tr key={car.id} className='carDataRow'>
 							<td className='carTableData'>{car.id}</td>
 							<td className='carTableData'>{car.make}</td>
 							<td className='carTableData'>{car.model}</td>
@@ -93,33 +148,44 @@ export default class CarManagerPage extends React.Component {
 		return (
 			<div className="car-manager">
 				<h2 id="main-heading">Car Manager</h2>
-				<form>
+				<form onSubmit={this.updateStoredFormInput}>	{/*onSubmit={}*/}
 					<table className='inputTable'>
-						<tr>
-							<th>ID</th>
-							<th>Make</th>
-							<th>Model</th>
-							<th>Seats</th>
-						</tr>
-						<tr>
-							<td><input className='carDataInput' id='idInput' type="text" placeholder='ID'/></td>
-							<td><input className='carDataInput' id='makeInput' type="text" placeholder='Make'/></td>
-							<td><input className='carDataInput' id='modelInput' type="text" placeholder='Model'/></td>
-							<td><input className='carDataInput' id='seatsInput' type="text" placeholder='Seats'/></td>
-						</tr>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Make</th>
+								<th>Model</th>
+								<th>Seats</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input className='carDataInput' id='idInput' type="text" placeholder='ID' onChange={e => this.handleChange(e)}/></td>
+								<td><input className='carDataInput' id='makeInput' type="text" placeholder='Make' onChange={e => this.handleChange(e)}/></td>
+								<td><input className='carDataInput' id='modelInput' type="text" placeholder='Model'	onChange={e => this.handleChange(e)}/></td>
+								<td><input className='carDataInput' id='seatsInput' type="text" placeholder='Seats'	onChange={e => this.handleChange(e)}/></td>
+							</tr>
+						</tbody>
 					</table>
 
-					<input className='action-btn' onClick={this.handleSubmit}/>
+					{/*<input type='submit' value="Post" className='action-btn' onClick={this.handlePosting}/>*/}
+					<input type='submit' value="Confirm" className='action-btn'/>
+					<button className='action-btn' onClick={this.updateCar}>Update Car</button>
 				</form>
+
 				<br></br>
 				<table>
-					<tr>
-						<th className='tableHeader'>ID</th>
-						<th className='tableHeader'>Make</th>
-						<th className='tableHeader'>Model</th>
-						<th className='tableHeader'>Seats</th>
-					</tr>
-					{carDataList}
+					<thead>
+						<tr>
+							<th className='tableHeader'>ID</th>
+							<th className='tableHeader'>Make</th>
+							<th className='tableHeader'>Model</th>
+							<th className='tableHeader'>Seats</th>
+						</tr>
+					</thead>
+					<tbody>
+						{carDataList}
+					</tbody>
 				</table>
 			</div>
 		);

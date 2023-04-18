@@ -28,5 +28,11 @@
 		"make": "coolcar",
 		"model": "premium",
 		"seats": 5
+	},
+	{
+		"id": 12,
+		"make": "post test",
+		"model": "newmodel",
+		"seats": 6
 	}
 ]
