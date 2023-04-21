@@ -1,5 +1,10 @@
-# car-manager
+# Car Manager Frontend
+### Basic usage guide
+- Most actions can be performed by entering all details and clicking an action button.
+- Deleting a car requires only the ID to be present. Other details are ignored.
+- Updating a car requires both the model and seats to be entered (changed or not) and the make is ignored.
 
+# API usage
 ### Adding a car
 Execute a **POST** at: http://localhost:8080/api  
 The post body should contain car data in JSON format.\

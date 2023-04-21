@@ -49,6 +49,36 @@ function dataDelete(url = ``, data = {make: "ERROR"}) {
 }
 
 /**
+ * If the provided value is valid returns 'true', otherwise returns 'false'.
+ * @param {*} input
+ * @returns 'true' if the provided value is valid, otherwise returns 'false'.
+ */
+function isValidInput(input) {
+	if (input == "error" || input == "") {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * If any of the inputs are invalid returns 'false', otherwise returns 'true'.
+ * @param {int} id
+ * @param {string} make
+ * @param {string} model
+ * @param {int} seats
+ * @returns 'false' if any input is invalid, otherwise returns 'true'.
+ */
+function allInputsAreValid(id, make, model, seats) {
+	if (!isValidInput(id) ||
+		!isValidInput(make) ||
+		!isValidInput(model) ||
+		!isValidInput(seats)) {
+		return false;
+	}
+	return true;
+}
+
+/**
  * Displays input fields for adding, updating and deleting cars.
  * Also displays a list of all current cars.
  */
@@ -122,7 +152,7 @@ export default class CarManagerPage extends React.Component {
 		const model = this.state.modelInput;
 		const seats = this.state.seatsInput;
 
-		if (id == "error" || make == "error" || model == "error" || seats == "error") {
+		if (!allInputsAreValid(id, make, model, seats)) {
 			console.log("Failed to add car. At least one invalid input!");
 			alert("Failed to add car. At least one invalid input!")
 			return false;
@@ -155,8 +185,9 @@ export default class CarManagerPage extends React.Component {
 		const model = this.state.modelInput;
 		const seats = this.state.seatsInput;
 
-		if (id == "error" || make == "error" || model == "error" || seats == "error") {
-			console.log("Failed to update car. At least one invalid input!");
+		// NOTE: both the 'model' and 'seats' input are required due to the way data is sent
+		if (!isValidInput(id) || !isValidInput(model) || !isValidInput(seats)) {
+			console.log("Failed to update car. One or more invalid inputs!");
 			alert("Failed to update car. At least one invalid input!");
 			return false;
 		}
@@ -185,7 +216,7 @@ export default class CarManagerPage extends React.Component {
 
 		const id = this.state.idInput;
 
-		if (id == "error") {
+		if (!isValidInput(id)) {
 			console.log("Failed to add car. Invalid ID input!");
 			alert("Failed to delete car. Invalid ID input!")
 			return false;

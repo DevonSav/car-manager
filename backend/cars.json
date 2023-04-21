@@ -36,12 +36,6 @@
 		"seats": 7
 	},
 	{
-		"id": 19,
-		"make": "blah",
-		"model": "hmm",
-		"seats": 3
-	},
-	{
 		"id": 8,
 		"make": "blah",
 		"model": "test",
@@ -58,5 +52,11 @@
 		"make": "blah2",
 		"model": "test",
 		"seats": 3
+	},
+	{
+		"id": 19,
+		"make": "blah",
+		"model": "hmm Edit",
+		"seats": "error"
 	}
 ]
