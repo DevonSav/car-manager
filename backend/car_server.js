@@ -1,7 +1,7 @@
-const express = require('express');
-const fs = require('fs');
-const app = express();
-const port = process.env.PORT || 3001;
+let express = require('express');
+let fs = require('fs');
+let app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
@@ -10,48 +10,48 @@ app.use(express.json());
  * @returns Car data as json.
  */
 function getCars() {
-	try {
-		const content = fs.readFileSync('cars.json');
-		return JSON.parse(content);
-	} catch(e) {
-		// file non-existent
-		fs.writeFileSync('cars.json', '[]');
-		return [];
-	}
+    try {
+        const content = fs.readFileSync('cars.json');
+        return JSON.parse(content);
+    } catch(e) {
+        // file non-existent
+        fs.writeFileSync('cars.json', '[]');
+        return [];
+    }
 }
 
 /**
  * Checks if a given car ID is already present in the car data array.
  * @param {JSON[]} carArray
- * @param {int} carID
+ * @param {int} carId
  * @returns If ID already in use returns true, otherwise returns false.
  */
-function hasCarID(carArray, carID) {
-	// Loop through all cars comparing the ID
-	for (const carItem of carArray) {
-		if (carItem.id == carID) {
-			// ID's match, stop the loop
-			return true;
-		}
-	}
-	return false;
+function hasCarId(carArray, carId) {
+    // Loop through all cars comparing the ID
+    for (const carItem of carArray) {
+        if (carItem.id == carId) {
+            // ID's match, stop the loop
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
  * Base function - returns json array of cars
  */
 app.get('/api', (req, resp) => {
-	const cars = getCars();
-	resp.send(cars);
+    const cars = getCars();
+    resp.send(cars);
 })
 
 
 /**
  * Adds a car to the file directly using the provided json.
- * @param {JSON} carJSON
+ * @param {JSON} carJson
  */
-function addCarDirect(carJSON) {
-	addCar(carJSON.id, carJSON.make, carJSON.model, carJSON.seats);
+function addCarDirect(carJson) {
+    addCar(carJson.id, carJson.make, carJson.model, carJson.seats);
 }
 
 /**
@@ -63,56 +63,56 @@ function addCarDirect(carJSON) {
  * @param {int} seats
  */
 function addCar(id, make, model, seats) {
-	const cars = getCars();
-	const carStr = `{"id":${id},"make":"${make}","model": "${model}","seats":${seats}}`;
+    const cars = getCars();
+    const carJsonString = `{"id":${id},"make":"${make}","model": "${model}","seats":${seats}}`;
 
-	// Parse to make sure formatting is correct
-	const carJSON = JSON.parse(carStr);
-	cars.push(carJSON);
+    // Parse to make sure formatting is correct
+    const carJson = JSON.parse(carJsonString);
+    cars.push(carJson);
 
-	// Write to the file
-	fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
+    // Write to the file
+    fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
 }
 
 /**
  * Creates a new car from posted json data (in the request body).
  */
 app.post('/api', (request, response) => {
-	console.log('Post body: ' + JSON.stringify(request.body));	// FIXME: JSON posted from the body
+    console.log('Post body: ' + JSON.stringify(request.body));	// FIXME: JSON posted from the body
 
-	const cars = getCars();
-	const postedJSON = request.body;
+    const cars = getCars();
+    const postedJson = request.body;
 
-	// ID conflict
-	if (hasCarID(cars, postedJSON.id)) {
-		// Early return
-		const errMsg = `Error! Car already exists with ID ${postedJSON.id}.`;
-		response.send({errMsg});
-		return;
-	}
+    // ID conflict
+    if (hasCarId(cars, postedJson.id)) {
+        // Early return
+        const errorMessage = `Error! Car already exists with ID ${postedJson.id}.`;
+        response.send({errMsg: errorMessage});
+        return;
+    }
 
-	// For auto ID
-	if (postedJSON.id == -1) {
-		let validID = false;
-		let newID = cars.length;	// last array position + 1
+    // For auto ID
+    if (postedJson.id == -1) {
+        let validId = false;
+        let newId = cars.length;	// last array position + 1
 
-		while (!validID) {
-			if (hasCarID(cars, newID)) {
-				newID += 1;
-			} else {
-				addCar(newID, postedJSON.make, postedJSON.model, postedJSON.seats);
-				const msg = `Success. Added car with auto ID ${newID}.`;
-				response.send({msg});
-				validID = true;
-				return;
-			}
-		}
-	}
+        while (!validId) {
+            if (hasCarId(cars, newId)) {
+                newId += 1;
+            } else {
+                addCar(newId, postedJson.make, postedJson.model, postedJson.seats);
+                const responseMessage = `Success. Added car with auto ID ${newId}.`;
+                response.send({msg: responseMessage});
+                validId = true;
+                return;
+            }
+        }
+    }
 
-	// ID was valid
-	addCarDirect(postedJSON);
-	const msg = `Success. Added car with ID ${postedJSON.id}.`;
-	response.send({msg});
+    // ID was valid
+    addCarDirect(postedJson);
+    const responseMessage = `Success. Added car with ID ${postedJson.id}.`;
+    response.send({msg: responseMessage});
 });
 
 
@@ -122,25 +122,25 @@ app.post('/api', (request, response) => {
  * @param {int} id
  * @returns true if sucessful, otherwise returns false.
  */
-function deleteCar(carID) {
-	const cars = getCars();
+function deleteCar(carId) {
+    const cars = getCars();
 
-	// Loop through all cars comparing the ID
-	for (const carItem of cars) {
-		if (carItem.id == carID) {
-			// ID's match so get item index
-			const i = cars.indexOf(carItem);
-			// Remove the item and rejoin the array
-			cars.splice(i, 1);
-			// Write the new file contents
-			fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
-			return true;
-		}
-	}
+    // Loop through all cars comparing the ID
+    for (const carItem of cars) {
+        if (carItem.id == carId) {
+            // ID's match so get item index
+            const i = cars.indexOf(carItem);
+            // Remove the item and rejoin the array
+            cars.splice(i, 1);
+            // Write the new file contents
+            fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
+            return true;
+        }
+    }
 
-	// No match found; shouldn't happen
-	console.log('Error deleting car from file!')
-	return false;
+    // No match found; shouldn't happen
+    console.log('Error deleting car from file!')
+    return false;
 }
 
 /**
@@ -148,58 +148,58 @@ function deleteCar(carID) {
  * Takes json data that has an ID.
  */
 app.delete('/api', (request, response) => {
-	console.log('Delete param: ' + request.params.carID);
+    console.log('Delete param: ' + request.params.carID);
 
-	const cars = getCars();
-	const targetID = parseInt(request.body.id);
+    const cars = getCars();
+    const targetId = parseInt(request.body.id);
 
-	// Missing ID
-	if (!hasCarID(cars, targetID)) {
-		const errMsg = `Error! No car exists with ID ${targetID}.`;
-		response.send({errMsg});
-		return;
-	}
+    // Missing ID
+    if (!hasCarId(cars, targetId)) {
+        const errorMessage = `Error! No car exists with ID ${targetId}.`;
+        response.send({errMsg: errorMessage});
+        return;
+    }
 
-	// ID was valid, remove car from file
-	deleteCar(targetID);
-	const msg = `Success. Removed car with ID ${targetID}.`;
-	response.send({msg});
+    // ID was valid, remove car from file
+    deleteCar(targetId);
+    const responseMessage = `Success. Removed car with ID ${targetId}.`;
+    response.send({msg: responseMessage});
 });
 
 /**
  * Updates an existing car in the file.
  * Returns true if sucessful, otherwise returns false.
- * @param {int} carID Target car to update.
+ * @param {int} carId Target car to update.
  * @param {String} newModel The new model name.
  * @param {int} newSeats The new number of seats.
  * @returns true if sucessful, otherwise returns false.
  */
-function updateCar(carID, newModel, newSeats) {
-	const cars = getCars();
+function updateCar(carId, newModel, newSeats) {
+    const cars = getCars();
 
-	// Loop through all cars comparing the ID
-	for (const carItem of cars) {
-		if (carItem.id == carID) {
-			// ID's match so update the item
-			if (newModel != undefined) {
-				carItem.model = newModel;
-			} else {
-				console.log(`Warning: New model undefined. Leaving as [${carItem.model}].`);
-			}
-			if (newSeats != undefined) {
-				carItem.seats = newSeats;
-			} else {
-				console.log(`Warning: New seat number undefined. Leaving as [${carItem.seats}].`);
-			}
-			// Write the new file contents
-			fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
-			return true;
-		}
-	}
+    // Loop through all cars comparing the ID
+    for (const carItem of cars) {
+        if (carItem.id == carId) {
+            // ID's match so update the item
+            if (newModel != undefined) {
+                carItem.model = newModel;
+            } else {
+                console.log(`Warning: New model undefined. Leaving as [${carItem.model}].`);
+            }
+            if (newSeats != undefined) {
+                carItem.seats = newSeats;
+            } else {
+                console.log(`Warning: New seat number undefined. Leaving as [${carItem.seats}].`);
+            }
+            // Write the new file contents
+            fs.writeFileSync('cars.json', JSON.stringify(cars, null, "\t"));
+            return true;
+        }
+    }
 
-	// No match found; shouldn't happen
-	console.log('Error updating car in file!')
-	return false;
+    // No match found; shouldn't happen
+    console.log('Error updating car in file!')
+    return false;
 }
 
 /**
@@ -207,39 +207,39 @@ function updateCar(carID, newModel, newSeats) {
  * Takes json data that has an ID and either a new model, new seat number, or both.
  */
 app.put('/api', (request, response) => {
-	console.log(`Put body: ${JSON.stringify(request.body)}`);
-	const postedData = request.body;
+    console.log(`Put body: ${JSON.stringify(request.body)}`);
+    const postedData = request.body;
 
-	const cars = getCars();
-	const targetID = parseInt(postedData.id);
+    const cars = getCars();
+    const targetId = parseInt(postedData.id);
 
-	// Missing ID
-	if (!hasCarID(cars, targetID)) {
-		const errMsg = `Error! No car exists with ID ${targetID}.`;
-		response.send({errMsg});
+    // Missing ID
+    if (!hasCarId(cars, targetId)) {
+        const errorMessage = `Error! No car exists with ID ${targetId}.`;
+        response.send({errMsg: errorMessage});
 
-		return;
-	}
+        return;
+    }
 
-	const newModel = postedData.model;
-	const newSeats = postedData.seats;
+    const newModel = postedData.model;
+    const newSeats = postedData.seats;
 
-	// Check that any data was actually provided
-	if (newModel == undefined && newSeats == undefined) {
-		const errMsg = `Error missing data! No updates specified.`;
-		response.send({errMsg});
+    // Check that any data was actually provided
+    if (newModel == undefined && newSeats == undefined) {
+        const errorMessage = `Error missing data! No updates specified.`;
+        response.send({errMsg: errorMessage});
 
-		return;
-	}
+        return;
+    }
 
-	// ID was valid and at least one value was defined
-	updateCar(targetID, newModel, newSeats);
-	const msg = `Success. Updated car with ID ${targetID}.`;
-	response.send({msg});
+    // ID was valid and at least one value was defined
+    updateCar(targetId, newModel, newSeats);
+    const responseMessage = `Success. Updated car with ID ${targetId}.`;
+    response.send({msg: responseMessage});
 });
 
 
-app.listen(port, ()=>console.log('Listening engaged'));
+app.listen(PORT, ()=>console.log('Listening engaged'));
 
 /** REFERENCES
  * https://stackoverflow.com/questions/3515523/javascript-how-can-i-generate-formatted-easy-to-read-json-straight-from-an-obje
