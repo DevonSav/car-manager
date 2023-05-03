@@ -1,9 +1,11 @@
-let express = require('express');
-let fs = require('fs');
-let app = express();
+const express = require('express');
+const helmet = require("helmet");
+const fs = require('fs');
+const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(helmet());
 
 /**
  * Returns car data from the json file, and creates a new file if it doesn't exist.
